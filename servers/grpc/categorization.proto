@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package categorization;
+
+message TextCategorizationInput {
+
+  string text = 2;
+}
+
+message TextCategorizationOutput {
+
+  string text = 1;
+  string prediction_id = 2;
+  int32 category = 3;
+}
+
+service TextCategorization {
+
+  rpc GetPrediction(TextCategorizationInput) returns (TextCategorizationOutput) {}
+}
