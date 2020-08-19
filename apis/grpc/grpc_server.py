@@ -3,11 +3,12 @@ from concurrent import futures
 # noinspection PyPackageRequirements
 import grpc
 import logging
+import os
 
-from servers.grpc.categorization_pb2_grpc import TextCategorizationServicer, \
+from apis.grpc.categorization_pb2_grpc import TextCategorizationServicer, \
     add_TextCategorizationServicer_to_server
-from servers.grpc.categorization_pb2 import TextCategorizationOutput
-from servers.common import categorize_text, generate_random_id
+from apis.grpc.categorization_pb2 import TextCategorizationOutput
+from apis.common import categorize_text, generate_random_id
 
 log = logging.getLogger(__name__)
 
@@ -26,8 +27,8 @@ class TextCategorizationService(TextCategorizationServicer):
 
 class TextCategorizationServer:
 
-    def __init__(self):
-        self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=4))
+    def __init__(self, max_workers):
+        self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
         add_TextCategorizationServicer_to_server(TextCategorizationService(), self.server)
         self.server.add_insecure_port('[::]:50051')
 
@@ -39,4 +40,5 @@ class TextCategorizationServer:
 
 if __name__ == "__main__":
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
-    TextCategorizationServer().start()
+    workers = int(os.getenv('MAX_WORKERS', 4))
+    TextCategorizationServer(workers).start()

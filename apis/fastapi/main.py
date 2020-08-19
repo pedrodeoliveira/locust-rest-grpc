@@ -2,8 +2,8 @@ from fastapi import FastAPI
 import logging
 import uvicorn
 
-from servers.common import categorize_text, generate_random_id
-from servers.fastapi.models import TextCategorizationInput, TextCategorizationOutput
+from apis.common import categorize_text, generate_random_id
+from apis.fastapi.models import TextCategorizationInput, TextCategorizationOutput
 
 # instantiate FastAPI
 app = FastAPI()

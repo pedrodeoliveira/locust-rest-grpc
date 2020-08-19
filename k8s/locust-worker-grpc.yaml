@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: locust-worker-grpc
+spec:
+  selector:
+    matchLabels:
+      app: locust-worker-grpc
+  replicas: 20
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: locust-worker-grpc
+    spec:
+      containers:
+        - name: locust-worker-grpc
+          image: gcr.io/locust-rest-grpc/locust-rest-grpc
+          command: ["locust", "-f", "locust_grpc.py"]
+#          imagePullPolicy: Never
+          resources:
+            requests:
+              memory: 0.2G
+              cpu: 1
+            limits:
+              memory: 1G
+              cpu: 2
+          env:
+            - name: LOCUST_MODE_WORKER
+              value: "true"
+            - name: LOCUST_MASTER_NODE_HOST
+              value: locust-master

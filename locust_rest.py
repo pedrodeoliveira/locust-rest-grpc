@@ -2,7 +2,7 @@ import json
 from locust import task, between
 from locust.contrib.fasthttp import FastHttpUser
 
-from servers.common import generate_random_text
+from apis.common import generate_random_text
 
 
 class ApiUser(FastHttpUser):
@@ -12,4 +12,4 @@ class ApiUser(FastHttpUser):
     def get_predictions(self):
         data = {"text": generate_random_text()}
         json_data = json.dumps(data)
-        self.client.post(url="/predict", data=json_data)
+        self.client.post(path="/predict", data=json_data)
