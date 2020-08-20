@@ -10,6 +10,9 @@ from apis.grpc.categorization_pb2_grpc import TextCategorizationServicer, \
 from apis.grpc.categorization_pb2 import TextCategorizationOutput
 from apis.common import categorize_text, generate_random_id
 
+
+log_level = os.getenv('LOG_LEVEL', 'INFO')
+logging.basicConfig(format='%(levelname)s:%(message)s', level=getattr(logging, log_level))
 log = logging.getLogger(__name__)
 
 
@@ -39,6 +42,5 @@ class TextCategorizationServer:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
     workers = int(os.getenv('MAX_WORKERS', 4))
     TextCategorizationServer(workers).start()

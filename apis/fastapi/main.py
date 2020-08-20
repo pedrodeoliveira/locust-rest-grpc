@@ -1,13 +1,23 @@
 from fastapi import FastAPI
 import logging
+import os
 import uvicorn
 
 from apis.common import categorize_text, generate_random_id
 from apis.fastapi.models import TextCategorizationInput, TextCategorizationOutput
 
+
+log_level = os.getenv('LOG_LEVEL', 'INFO')
+logging.basicConfig(format='%(levelname)s:%(message)s', level=getattr(logging, log_level))
+log = logging.getLogger(__name__)
+
 # instantiate FastAPI
 app = FastAPI()
-log = logging.getLogger(__name__)
+
+
+@app.on_event("startup")
+async def startup_event():
+    log.info(f'Starting FastAPI ...')
 
 
 @app.post("/predict", response_model=TextCategorizationOutput)
@@ -22,5 +32,4 @@ async def predict(body: TextCategorizationInput):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
     uvicorn.run(app, host="localhost", port=8000)
