@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: fastapi
-  replicas: 6
+  replicas: 12
   strategy:
     type: RollingUpdate
   template:
@@ -33,6 +33,10 @@ spec:
               value: "apis.fastapi.main"
             - name: MAX_WORKERS
               value: "1"
+            - name: LOG_LEVEL
+              value: "INFO"
+#      nodeSelector:
+#        workload: api
 ---
 apiVersion: v1
 kind: Service
@@ -41,7 +45,7 @@ metadata:
 spec:
   selector:
     app: fastapi
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - port: 8000
       targetPort: http-api

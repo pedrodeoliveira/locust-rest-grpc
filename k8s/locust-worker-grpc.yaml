@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: locust-worker-grpc
-  replicas: 20
+  replicas: 14
   strategy:
     type: RollingUpdate
   template:

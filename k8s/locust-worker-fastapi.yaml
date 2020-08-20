@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: locust-worker-fastapi
-  replicas: 8
+  replicas: 10
   strategy:
     type: RollingUpdate
   template:
