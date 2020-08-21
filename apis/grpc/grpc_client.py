@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 
 if __name__ == "__main__":
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
-    with grpc.insecure_channel('34.105.156.122:50051') as channel:
+    with grpc.insecure_channel('34.105.137.182:50051') as channel:
         stub = TextCategorizationStub(channel=channel)
         input_data = TextCategorizationInput(text='predict this')
         response = stub.GetPrediction(input_data)

@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+option go_package = "github.com/pedrodeoliveira/apis/grpcgo";
+
 package categorization;
 
 message TextCategorizationInput {

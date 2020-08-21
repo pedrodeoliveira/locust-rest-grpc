@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpcgo-api
+spec:
+  selector:
+    matchLabels:
+      app: grpcgo-api
+  replicas: 5
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: grpcgo-api
+    spec:
+      containers:
+        - name: grpcgo-api
+          image: gcr.io/locust-rest-grpc/grpc-go
+#          imagePullPolicy: Never
+          resources:
+            requests:
+              memory: 0.2G
+              cpu: 1
+            limits:
+              memory: 2G
+              cpu: 2
+          ports:
+            - name: grpc-api
+              containerPort: 50051
+      # nodeSelector:
+      #   workload: api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpcgo-api
+spec:
+  selector:
+    app: grpcgo-api
+  type: LoadBalancer
+  ports:
+    - port: 50051
+      targetPort: grpc-api
