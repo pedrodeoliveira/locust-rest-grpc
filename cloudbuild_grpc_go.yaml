@@ -3,7 +3,7 @@ steps:
   args:
   - build
   - "--tag=gcr.io/$PROJECT_ID/grpc-go"
-  - "--file=./go.Dockerfile"
+  - "--file=./go-grpc.Dockerfile"
   - .
 images:
 - "gcr.io/$PROJECT_ID/grpc-go"

@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restgo-api
+spec:
+  selector:
+    matchLabels:
+      app: restgo-api
+  replicas: 5
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: restgo-api
+    spec:
+      containers:
+        - name: restgo-api
+          image: gcr.io/locust-rest-grpc/rest-go
+#          imagePullPolicy: Never
+          resources:
+            requests:
+              memory: 0.2G
+              cpu: 1
+            limits:
+              memory: 2G
+              cpu: 2
+          ports:
+            - name: rest-api
+              containerPort: 10000
+      # nodeSelector:
+      #   workload: api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: restgo-api
+spec:
+  selector:
+    app: restgo-api
+  type: LoadBalancer
+  ports:
+    - port: 10000
+      targetPort: grpc-api

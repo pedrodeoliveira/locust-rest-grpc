@@ -1,6 +1,6 @@
 FROM golang:1.15
 
-RUN go get github.com/go-playground/validator/v10 && \
+RUN go get github.com/go-playground/validator && \
     go get github.com/gorilla/mux && \
     go get github.com/sirupsen/logrus
 
