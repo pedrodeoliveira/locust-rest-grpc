@@ -4,15 +4,20 @@ This project provides code and configuration for performing distributed load tes
 
 As a use case for the Web APIs, we implement an API that serves predictions of a Machine Learning model. The problem at hand is an hypothetical *text classification/categorization* problem. A user can send a **predict** request with a string of text (to categorize), and the API will return the **predicted** category (an integer).
 
-This project uses [Locust](https://locust.io/) as a tool for performing the load testing, i.e, for simulating users making requests to the APIs. This tool can be used in a standalone mode, but can also be executed on a distributed mode. In this mode, we will have a **master** running the a Web UI and a set of **workers** simulating the actual users. Running in a distributed fashion enables us to achieve a higher Requests Per Second (RPS) rate when testing the APIs. The RPS will be limited by either the API or the Locust workers throughput.
+This project uses [Locust](https://locust.io/) as a tool for performing the load testing, i.e, for simulating users/clients making requests to the APIs. This tool can be used in a standalone mode, but can also be executed on a distributed mode. In the latter, we will have a **master** running the a Web UI and a set of **workers** simulating the actual users/clients. Running in a distributed fashion enables us to achieve a higher Requests Per Second (RPS) rate when testing the APIs. The RPS will be limited by either the API or the Locust workers throughput.
+
+In the tests that are performed we will pay close attention to the RPS rate (throughput) the latency percentiles and to failure rates as well.
+
+## Distributed Load Testing with Locust
 
 ## Web APIs
 
+This section brifely describes the Web APIs implemented in this project that can be tested using the Locust Workers developed here.
 
-### FastAPI
-
-### gRPC API
-
+- Python REST API using FastAPI
+- Python gRPC API
+- Go REST API
+- Go gRPC API
 
 ## GKE Setup
 
@@ -25,12 +30,12 @@ This project uses [Locust](https://locust.io/) as a tool for performing the load
 ### Configure GCP Defaults
 
 ```bash
-$ PROJECT=locust-rest-grpc
-$ REGION=europe-west2
-$ ZONE=${REGION}-b
-$ CLUSTER=gke-load-test
-$ gcloud config set compute/region $REGION 
-$ gcloud config set compute/zone $ZONE
+$ PROJECT=locust-rest-grpc && \
+REGION=europe-west2 && \
+ZONE=${REGION}-b && \
+CLUSTER=gke-load-test && \
+gcloud config set compute/region $REGION && \
+gcloud config set compute/zone $ZONE
 ```
 
 Enable the relevant APIs:
@@ -56,18 +61,43 @@ Get the credentials of the newly create GKE cluster, which will update the `.kub
 $ gcloud container clusters get-credentials $CLUSTER
 ```
 
-Build the image using Container Builder and upload it to the Container Registry.
+### Build Images with Locust Workers and Python APIs
+
+Given that we are using the Google Cloud, we will use for convinience the Container Builder to build and upload the images into the GCP's Container Registry.
+
+The below command can be used for building the image that will contain both the code with Locust Master and Workers (for both REST and gRPC flavours) together with the code for the Python Web APIs (FastAPI and gRPC-based API):
 
 ```bash
-$ gcloud builds submit \
-    --tag gcr.io/$PROJECT/locust-rest-grpc:latest .
+$ gcloud builds submit --tag gcr.io/$PROJECT/locust-rest-grpc:latest .
 ```
+
+### Build Images for the Go REST/gRPC APIs
+
+Build the Go REST API with:
+
+```bash
+$ gcloud builds submit --config cloudbuild_rest_go.yaml
+```
+
+Similarly, build the Go gRPC API with:
+
+```bash
+$ gcloud builds submit --config cloudbuild_grpc_go.yaml
+```
+
+The previous commands will generate the images `gcr.io/$PROJECT/rest-go` and `gcr.io/$PROJECT/grpc-go`, respectively.
 
 ### Cleanup
 
 ```bash
 $ gcloud container clusters delete $CLUSTER --zone $ZONE
 ```
+
+## Results
+
+
+## Conclusions
+
 
 ## Links
 
