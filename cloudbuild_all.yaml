@@ -5,20 +5,20 @@ steps:
   - "--tag=gcr.io/$PROJECT_ID/locust-rest-grpc"
   - "--file=./Dockerfile"
   - .
-  waitFor: "-"
+  waitFor: ["-"]
 - name: "gcr.io/cloud-builders/docker"
   args:
   - build
   - "--tag=gcr.io/$PROJECT_ID/rest-go"
   - "--file=./go-rest.Dockerfile"
   - .
-  waitFor: "-"   
+  waitFor: ["-"]
 - name: "gcr.io/cloud-builders/docker"
   args:
   - build
   - "--tag=gcr.io/$PROJECT_ID/grpc-go"
   - "--file=./go-grpc.Dockerfile"
   - .
-  waitFor: "-"
+  waitFor: ["-"]
 images: [
   "gcr.io/$PROJECT_ID/locust-rest-grpc", "gcr.io/$PROJECT_ID/rest-go", "gcr.io/$PROJECT_ID/rest-go"]
