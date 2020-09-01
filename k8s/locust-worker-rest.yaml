@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: locust-worker-rest
-          image: gcr.io/locust-rest-grpc/locust-rest-grpc
+          image: gcr.io/locust-rest-grpc/locust
           command: ["locust", "-f", "locust_rest.py"]
 #          imagePullPolicy: Never
           resources:

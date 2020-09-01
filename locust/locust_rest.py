@@ -2,7 +2,7 @@ import json
 from locust import task, between
 from locust.contrib.fasthttp import FastHttpUser
 
-from apis.common import generate_random_text
+from apis.python.common import generate_random_text
 
 
 class ApiUser(FastHttpUser):

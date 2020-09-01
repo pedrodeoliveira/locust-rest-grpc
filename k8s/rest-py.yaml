@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fastapi
+  name: rest-py
 spec:
   selector:
     matchLabels:
-      app: fastapi
+      app: rest-py
   replicas: 12
   strategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        app: fastapi
+        app: rest-py
     spec:
       containers:
-        - name: fastapi
-          image: gcr.io/locust-rest-grpc/locust-rest-grpc
+        - name: rest-py
+          image: gcr.io/locust-rest-grpc/rest-py
 #          imagePullPolicy: Never
           resources:
             requests:
@@ -29,8 +29,6 @@ spec:
             - name: http-api
               containerPort: 80
           env:
-            - name: MODULE_NAME
-              value: "apis.fastapi.main"
             - name: MAX_WORKERS
               value: "1"
             - name: LOG_LEVEL
@@ -41,10 +39,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fastapi
+  name: rest-py
 spec:
   selector:
-    app: fastapi
+    app: rest-py
   type: ClusterIP
   ports:
     - port: 8000

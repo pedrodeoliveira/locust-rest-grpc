@@ -5,5 +5,3 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from apis.grpc.categorization_pb2_grpc import TextCategorizationStub
-from apis.grpc.categorization_pb2 import TextCategorizationInput

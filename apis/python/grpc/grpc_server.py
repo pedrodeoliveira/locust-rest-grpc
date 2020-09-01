@@ -5,10 +5,10 @@ import grpc
 import logging
 import os
 
-from apis.grpc.categorization_pb2_grpc import TextCategorizationServicer, \
+from apis.python.grpc.categorization_pb2_grpc import TextCategorizationServicer, \
     add_TextCategorizationServicer_to_server
-from apis.grpc.categorization_pb2 import TextCategorizationOutput
-from apis.common import categorize_text, generate_random_id
+from apis.python.grpc.categorization_pb2 import TextCategorizationOutput
+from apis.python.common import categorize_text, generate_random_id
 
 
 log_level = os.getenv('LOG_LEVEL', 'INFO')

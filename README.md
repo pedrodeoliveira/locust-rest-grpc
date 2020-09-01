@@ -4,30 +4,45 @@ This project provides code and configuration for performing distributed load tes
 
 As a use case for the Web APIs, we implement an API that serves predictions of a Machine Learning model. The problem at hand is an hypothetical *text classification/categorization* problem. A user can send a **predict** request with a string of text (to categorize), and the API will return the **predicted** category (an integer).
 
-This project uses [Locust](https://locust.io/) as a tool for performing the load testing, i.e, for simulating users/clients making requests to the APIs. This tool can be used in a standalone mode, but can also be executed on a distributed mode. In the latter, we will have a **master** running the a Web UI and a set of **workers** simulating the actual users/clients. Running in a distributed fashion enables us to achieve a higher Requests Per Second (RPS) rate when testing the APIs. The RPS will be limited by either the API or the Locust workers throughput.
+This project uses [Locust](https://locust.io/) as a tool for performing the load testing, i.e, for simulating users/clients making requests to the APIs. This tool can be used in standalone mode, but can also be executed on a distributed mode. In the latter, we will have a **master** running the Web UI and a set of **workers** simulating the actual users/clients. Running in distributed mode enables us to achieve a higher Requests Per Second (RPS) rate when testing the APIs. The RPS will be limited by either the API or the Locust workers throughput.
 
-In the tests that are performed we will pay close attention to the RPS rate (throughput) the latency percentiles and to failure rates as well.
+In the tests that are performed we will pay close attention to the RPS rate (throughput), the latency percentiles and to failure rates as well.
 
 ## Distributed Load Testing with Locust
+
+As mentioned before, a single machine may not be enough to achieve the deseried RPS rate, therefore one needs to run the load tests across multiple nodes. Instructions on to run Locust in distributed mode can be found [here](https://docs.locust.io/en/stable/running-locust-distributed.html). 
+
+In this project, we provide two *locustfiles* for each type of Web API (REST or gRPC). The `locust` package provides code to perform load testing of REST-based APIs, but it doesn't provide the same implementation for gRPC-based APIs. As such, we provide here the code that will allow us to test our gRPC API. Naturally, this code is not generic and is targeted for the Web API being tested in this project. Nevertheless, it's easy to extend to other use cases. 
+
+The code for the *locustfiles* can be found in the `locust/` directory:
+
+- `locust/locust_rest.py` used to simulate REST-based users/clients
+- `locust/locust_grpc.py` used to simulate gRPC-based users/clients
 
 ## Web APIs
 
 This section brifely describes the Web APIs implemented in this project that can be tested using the Locust Workers developed here.
 
-- Python REST API using FastAPI
-- Python gRPC API
-- Go REST API
-- Go gRPC API
+- **Python REST** implemented using `fastapi`.
+- **Python gRPC**
+- **Go REST** implemented using `gorilla/mux`.
+- **Go gRPC**
 
-## GKE Setup
+The code for the Web APIs can be found in the `apis/` folder, there is a subfolder for each of the programming languages for which there is at least one API implemented. There is also the directory `apis/protos/` which provides comon proto files used by the gRPC-based implementations, that are common to all programming languages.
 
-### Requirements
+## Running Tests on GKE
+
+We will use a Kubernetes cluster to deploy and run our tests, in particular, we will use the Google Kubernetes Engine (GKE) to do this. Find below, instructions on how to setup GKE and create a k8s cluster.
+
+### GKE Setup
+
+Requirements:
 
 - have a GCP account
 - enable the relevant APIs
 - gcloud and kubectl must be installed
 
-### Configure GCP Defaults
+Configure GCP Defaults
 
 ```bash
 $ PROJECT=locust-rest-grpc && \
@@ -61,33 +76,70 @@ Get the credentials of the newly create GKE cluster, which will update the `.kub
 $ gcloud container clusters get-credentials $CLUSTER
 ```
 
-### Build Images with Locust Workers and Python APIs
+### Continuous Integration
 
 Given that we are using the Google Cloud, we will use for convinience the Container Builder to build and upload the images into the GCP's Container Registry.
 
-The below command can be used for building the image that will contain both the code with Locust Master and Workers (for both REST and gRPC flavours) together with the code for the Python Web APIs (FastAPI and gRPC-based API):
+An automated build as been setup in Cloud Build which is trigger by any push to `master`. The configuration file for this build can be found in `cloudbuild/cloudbuild_all.yaml`. For each of the steps (individual artifacts) there is also an alternative `cloudbuild_<artifact>.yaml` file in the same directory. 
+
+The triggered build will create (in case of success) the following images:
+
+- `gcr.io/$PROJECT/locust` can be used to run the Locust Master or the the Workers in both REST and gRPC flavours.
+- `gcr.io/$PROJECT/rest-go`
+- `gcr.io/$PROJECT/grpc-go`
+- `gcr.io/$PROJECT/rest-py`
+- `gcr.io/$PROJECT/grpc-py`
+
+The below command can be used for manually performing the same builds:
 
 ```bash
-$ gcloud builds submit --tag gcr.io/$PROJECT/locust-rest-grpc:latest .
+$ gcloud builds submit --config cloudbuild_all.yaml
 ```
 
-### Build Images for the Go REST/gRPC APIs
+### Run Locust and APIs
 
-Build the Go REST API with:
+Now that we already have the cluster up and running and that we have build our images, we can launch our workloads and start running the load tests.
 
-```bash
-$ gcloud builds submit --config cloudbuild_rest_go.yaml
+The below diagram shows a simplified view of what will be deployed. In practice, gRPC and REST workloads will be deployed in separate tests for maximizing the cluster utilization for each of the types of APIs.
+
+![diagram](resources/locust_diagram.png)
+
+#### Locust Master
+
+The Locust Master should be launched using:
+
+```
+$ kubectl apply -f k8s/locust_master.yaml
 ```
 
-Similarly, build the Go gRPC API with:
+This will create a `deployment` and a `service`. The latter is of type `LoadBalancer` and you need to check the external IP address so that one can access the Web UI in `http://<external-ip-address>:8089`.
 
-```bash
-$ gcloud builds submit --config cloudbuild_grpc_go.yaml
+#### Locust Workers
+
+The Locust Workers should be launched using:
+
+```
+$ kubectl apply -f k8s/locust_worker_rest.yaml
 ```
 
-The previous commands will generate the images `gcr.io/$PROJECT/rest-go` and `gcr.io/$PROJECT/grpc-go`, respectively.
+The previous command shows how to run Locust Workers for simulating REST clients/users. A similar `k8s/locust_worker_grpc.yaml` exists for simulating gRPC clients as well. This command will create a `deployment` with the specified number of `replicas:`. This field will be changed depending on the test case.
+
+
+#### Web APIs
+
+As an example, we can deploy the gRPC Python API using the following command:
+
+```
+$ kubectl apply -f k8s/grpc-py.yaml
+```
+
+This will create a `deployment` and a `service`. The `service` should only be of type `LoadBalance` when one needs to directly test the API. The `replicas:` field in the `deployment` spec will be changed according to the test case.
+
+For every other type of API implementation a `.yaml` is provided in the same folder.
 
 ### Cleanup
+
+After all the tests have been performed, use the below command to delete the cluster and all workloads.
 
 ```bash
 $ gcloud container clusters delete $CLUSTER --zone $ZONE

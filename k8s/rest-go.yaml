@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: restgo-api
+  name: rest-go
 spec:
   selector:
     matchLabels:
-      app: restgo-api
+      app: rest-go
   replicas: 1
   strategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        app: restgo-api
+        app: rest-go
     spec:
       containers:
-        - name: restgo-api
+        - name: rest-go
           image: gcr.io/locust-rest-grpc/rest-go
 #          imagePullPolicy: Never
           resources:
@@ -34,10 +34,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: restgo-api
+  name: rest-go
 spec:
   selector:
-    app: restgo-api
+    app: rest-go
   type: LoadBalancer
   ports:
     - port: 10000

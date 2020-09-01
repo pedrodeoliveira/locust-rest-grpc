@@ -1,0 +1,39 @@
+steps:
+- name: "gcr.io/cloud-builders/docker"
+  args:
+  - build
+  - "--tag=gcr.io/$PROJECT_ID/locust"
+  - "--file=./dockerfiles/locust.Dockerfile"
+  - .
+  waitFor: ["-"]
+- name: "gcr.io/cloud-builders/docker"
+  args:
+  - build
+  - "--tag=gcr.io/$PROJECT_ID/rest-go"
+  - "--file=./dockerfiles/rest-go.Dockerfile"
+  - .
+  waitFor: ["-"]
+- name: "gcr.io/cloud-builders/docker"
+  args:
+  - build
+  - "--tag=gcr.io/$PROJECT_ID/grpc-go"
+  - "--file=./dockerfiles/grpc-go.Dockerfile"
+  - .
+  waitFor: ["-"]
+- name: "gcr.io/cloud-builders/docker"
+  args:
+  - build
+  - "--tag=gcr.io/$PROJECT_ID/rest-py"
+  - "--file=./dockerfiles/rest-py.Dockerfile"
+  - .
+  waitFor: ["-"]
+- name: "gcr.io/cloud-builders/docker"
+  args:
+  - build
+  - "--tag=gcr.io/$PROJECT_ID/grpc-py"
+  - "--file=./dockerfiles/grpc-py.Dockerfile"
+  - .
+  waitFor: ["-"]
+images: [
+  "gcr.io/$PROJECT_ID/locust", "gcr.io/$PROJECT_ID/rest-go", "gcr.io/$PROJECT_ID/grpc-go",
+"gcr.io/$PROJECT_ID/rest-py", "gcr.io/$PROJECT_ID/grpc-py"]

@@ -3,8 +3,8 @@ import logging
 import os
 import uvicorn
 
-from apis.common import categorize_text, generate_random_id
-from apis.fastapi.models import TextCategorizationInput, TextCategorizationOutput
+from apis.python.common import categorize_text, generate_random_id
+from apis.python.rest.models import TextCategorizationInput, TextCategorizationOutput
 
 
 log_level = os.getenv('LOG_LEVEL', 'INFO')

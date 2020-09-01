@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: grpcgo-api
+  name: grpc-go
 spec:
   selector:
     matchLabels:
-      app: grpcgo-api
+      app: grpc-go
   replicas: 5
   strategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        app: grpcgo-api
+        app: grpc-go
     spec:
       containers:
-        - name: grpcgo-api
+        - name: grpc-go
           image: gcr.io/locust-rest-grpc/grpc-go
 #          imagePullPolicy: Never
           resources:
@@ -34,10 +34,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: grpcgo-api
+  name: grpc-go
 spec:
   selector:
-    app: grpcgo-api
+    app: grpc-go
   type: LoadBalancer
   ports:
     - port: 50051

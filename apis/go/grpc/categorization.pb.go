@@ -4,7 +4,7 @@
 // 	protoc        v3.12.3
 // source: grpc/categorization.proto
 
-package grpcgo
+package grpc
 
 import (
 	proto "github.com/golang/protobuf/proto"

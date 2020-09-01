@@ -3,7 +3,7 @@ steps:
   args:
   - build
   - "--tag=gcr.io/$PROJECT_ID/rest-go"
-  - "--file=./go-rest.Dockerfile"
+  - "--file=./dockerfiles/rest-go.Dockerfile"
   - .
 images:
 - "gcr.io/$PROJECT_ID/rest-go"

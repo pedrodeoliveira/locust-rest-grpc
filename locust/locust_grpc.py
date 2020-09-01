@@ -3,9 +3,9 @@ from locust import User, task, between
 # noinspection PyPackageRequirements
 import grpc
 
-from apis.grpc import TextCategorizationStub
-from apis.grpc import TextCategorizationInput
-from apis.common import generate_random_text
+from apis.python.grpc.categorization_pb2_grpc import TextCategorizationStub
+from apis.python.grpc.categorization_pb2 import TextCategorizationInput
+from apis.python.common import generate_random_text
 
 
 class GrpcUser(User):
