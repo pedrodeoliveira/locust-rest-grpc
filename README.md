@@ -149,9 +149,11 @@ $ gcloud container clusters delete $CLUSTER --zone $ZONE
 
 ## Results
 
+The full details of the tests performed and the respective results can be found [here](docs/results.md).
 
 ## Conclusions
 
+TBD
 
 ## Links
 
