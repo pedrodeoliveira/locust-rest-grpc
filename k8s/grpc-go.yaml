@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: grpc-go
-  replicas: 5
+  replicas: 7
   strategy:
     type: RollingUpdate
   template:
@@ -28,8 +28,8 @@ spec:
           ports:
             - name: grpc-api
               containerPort: 50051
-      # nodeSelector:
-      #   workload: api
+      nodeSelector:
+        workload: api
 ---
 apiVersion: v1
 kind: Service

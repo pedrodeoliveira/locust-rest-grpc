@@ -17,7 +17,7 @@ spec:
       containers:
         - name: locust-master
           image: gcr.io/locust-rest-grpc/locust
-          command: [ "locust", "-f", "locust_grpc.py", "--master"]
+          command: [ "locust", "-f", "locust/locust_grpc.py", "--master"]
 #          imagePullPolicy: Never
           resources:
             requests:

@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: rest-py
-  replicas: 12
+  replicas: 1
   strategy:
     type: RollingUpdate
   template:
@@ -21,20 +21,20 @@ spec:
           resources:
             requests:
               memory: 0.2G
-              cpu: 1
+              cpu: 7
             limits:
               memory: 1G
-              cpu: 2
+              cpu: 8
           ports:
             - name: http-api
               containerPort: 80
           env:
             - name: MAX_WORKERS
-              value: "1"
+              value: "8"
             - name: LOG_LEVEL
               value: "INFO"
-#      nodeSelector:
-#        workload: api
+      nodeSelector:
+        workload: api
 ---
 apiVersion: v1
 kind: Service

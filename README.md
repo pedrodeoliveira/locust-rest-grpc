@@ -32,7 +32,7 @@ The code for the Web APIs can be found in the `apis/` folder, there is a subfold
 
 ## Running Tests on GKE
 
-We will use a Kubernetes cluster to deploy and run our tests, in particular, we will use the Google Kubernetes Engine (GKE) to do this. Find below, instructions on how to setup GKE and create a k8s cluster.
+We will use a Kubernetes cluster to deploy and run our tests, in particular, we will use the **Google Kubernetes Engine** (GKE) to do this. Find below, instructions on how to setup GKE and create a k8s cluster.
 
 ### GKE Setup
 
@@ -40,9 +40,9 @@ Requirements:
 
 - have a GCP account
 - enable the relevant APIs
-- gcloud and kubectl must be installed
+- `gcloud` and `kubectl` must be installed
 
-Configure GCP Defaults
+Configure GCP Defaults:
 
 ```bash
 $ PROJECT=locust-rest-grpc && \
@@ -66,11 +66,13 @@ $ gcloud services enable \
 
 ### Create a Cluster in GKE
 
+A cluster 3 node cluster with 8 cores by node can be created using this command:
+
 ```bash
 $ gcloud container clusters create $CLUSTER --machine-type=n1-standard-8
 ```
 
-Get the credentials of the newly create GKE cluster, which will update the `.kubeconfig` file.
+Get the credentials of the newly create GKE cluster, which will update the `~/.kubeconfig` file.
 
 ```bash
 $ gcloud container clusters get-credentials $CLUSTER
@@ -78,7 +80,7 @@ $ gcloud container clusters get-credentials $CLUSTER
 
 ### Continuous Integration
 
-Given that we are using the Google Cloud, we will use for convinience the Container Builder to build and upload the images into the GCP's Container Registry.
+Given that we are using the Google Cloud for our tests, we will use the GCP's **Cloud Build** to build and upload the images into the GCP's **Container Registry**.
 
 An automated build as been setup in Cloud Build which is trigger by any push to `master`. The configuration file for this build can be found in `cloudbuild/cloudbuild_all.yaml`. For each of the steps (individual artifacts) there is also an alternative `cloudbuild_<artifact>.yaml` file in the same directory. 
 

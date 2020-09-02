@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: grpc-py
-  replicas: 7
+  replicas: 1
   strategy:
     type: RollingUpdate
   template:
@@ -17,23 +17,23 @@ spec:
       containers:
         - name: grpc-py
           image: gcr.io/locust-rest-grpc/grpc-py
-          command: [ "python", "apis/grpc/grpc_server.py"]
+          command: [ "python", "apis/python/grpc/grpc_server.py"]
 #          imagePullPolicy: Never
           resources:
             requests:
               memory: 0.2G
-              cpu: 1
+              cpu: 7
             limits:
               memory: 2G
-              cpu: 2
+              cpu: 8
           ports:
             - name: grpc-api
               containerPort: 50051
           env:
             - name: MAX_WORKERS
-              value: "1"
-#      nodeSelector:
-#        workload: api
+              value: "10"
+      nodeSelector:
+        workload: api
 ---
 apiVersion: v1
 kind: Service

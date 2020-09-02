@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: rest-go
-  replicas: 1
+  replicas: 7
   strategy:
     type: RollingUpdate
   template:
@@ -28,8 +28,8 @@ spec:
           ports:
             - name: rest-api
               containerPort: 10000
-      # nodeSelector:
-      #   workload: api
+      nodeSelector:
+        workload: api
 ---
 apiVersion: v1
 kind: Service
